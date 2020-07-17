@@ -8,9 +8,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
-use App\Http\Controllers\Controller;
 
-class AwsSesBounceComplaintHandler extends Controller
+
+class AwsSesBounceComplaintHandler
 {
     public static function test() : string
     {
