@@ -1,0 +1,27 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class CreateWrongEmailsTable extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('wrong_emails', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->string('email', 60);
+            $table->string('problem_type', 30);
+            $table->string('problem_subtype', 30);
+            $table->unsignedInteger('repeated_attempts')->default(1);
+            $table->boolean('ignore')->default(false);
+
+            $table->timestamps();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('wrong_emails');
+    }
+}
