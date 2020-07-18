@@ -15,8 +15,8 @@ class AwsSesBounceComplaintHandlerServiceProvider extends ServiceProvider
     {
         // $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'ag84ark');
         // $this->loadViewsFrom(__DIR__.'/../resources/views', 'ag84ark');
-         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
-         $this->loadRoutesFrom(__DIR__.'/routes.php');
+        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+        $this->loadRoutesFrom(__DIR__.'/routes.php');
 
         // Publishing is only necessary when using the CLI.
         if ($this->app->runningInConsole()) {
@@ -44,7 +44,7 @@ class AwsSesBounceComplaintHandlerServiceProvider extends ServiceProvider
      *
      * @return array
      */
-    public function provides() : array
+    public function provides(): array
     {
         return ['aws-ses-bounce-complaint-handler'];
     }

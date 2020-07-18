@@ -1,14 +1,12 @@
 <?php
 
-
 namespace ag84ark\AwsSesBounceComplaintHandler\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
-
 /**
- * ag84ark\AwsSesBounceComplaintHandler\Models\WrongEmail
+ * ag84ark\AwsSesBounceComplaintHandler\Models\WrongEmail.
  *
  * @property int $id
  * @property string $email
@@ -34,24 +32,24 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\ag84ark\AwsSesBounceComplaintHandler\Models\WrongEmail whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-
 class WrongEmail extends Model
 {
+    protected $table = 'wrong_emails';
 
-    protected $table ='wrong_emails';
+    protected $fillable = ['email', 'problem_type', 'problem_subtype', 'repeated_attempts'];
 
-    protected $fillable = ['email','problem_type', 'problem_subtype' ,'repeated_attempts'];
-
-
-    public function unsubscribed(): bool {
+    public function unsubscribed(): bool
+    {
         return $this->problem_type === 'complaint';
     }
 
-    public function dontSend(): bool  {
+    public function dontSend(): bool
+    {
         return $this->problem_type === 'bounce' && $this->problem_subtype === 'Permanent';
     }
 
-    public function canBouncedSend(): bool {
+    public function canBouncedSend(): bool
+    {
         return $this->problem_type === 'bounce'
             && $this->problem_subtype !== 'Permanent'
             && $this->updated_at->diffInMinutes(config('aws-ses-bounce-complaint-handler.block_bounced_transient_for_minutes'));
@@ -83,7 +81,4 @@ class WrongEmail extends Model
     {
         return $query->where('ignore', '=', false);
     }
-
-
-
 }
