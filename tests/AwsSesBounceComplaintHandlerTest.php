@@ -145,7 +145,7 @@ class AwsSesBounceComplaintHandlerTest extends TestCase
 }';
 
         try {
-            return json_decode($requestData, true, 512, JSON_THROW_ON_ERROR);
+            return json_decode($requestData, true);
         } catch (\JsonException $e) {
             return [];
         }

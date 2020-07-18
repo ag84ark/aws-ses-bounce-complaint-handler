@@ -1,6 +1,6 @@
 {
     "name": "ag84ark/aws-ses-bounce-complaint-handler",
-    "description": ":package_description",
+    "description": "Helper for handling AWS SES with SNS",
     "license": "MIT",
     "version": "0.1",
     "authors": [
@@ -16,7 +16,7 @@
         "illuminate/support": "~5|~6|~7"
     },
     "require-dev": {
-        "phpunit/phpunit": "^8.0",
+        "phpunit/phpunit": "~7|~8",
         "mockery/mockery": "^1.1",
         "orchestra/testbench": "~3|~4",
         "sempro/phpunit-pretty-print": "^1.0"

@@ -52,6 +52,6 @@ Please see the [license file](license.md) for more information.
 [link-packagist]: https://packagist.org/packages/ag84ark/aws-ses-bounce-complaint-handler
 [link-downloads]: https://packagist.org/packages/ag84ark/aws-ses-bounce-complaint-handler
 [link-travis]: https://travis-ci.org/ag84ark/aws-ses-bounce-complaint-handler
-[link-styleci]: https://styleci.io/repos/12345678
+[link-styleci]: https://styleci.io/repos/280539001
 [link-author]: https://github.com/ag84ark
 
