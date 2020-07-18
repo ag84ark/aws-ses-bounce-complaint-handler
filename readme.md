@@ -4,6 +4,8 @@
 [![Total Downloads][ico-downloads]][link-downloads]
 [![Build Status][ico-travis]][link-travis]
 [![StyleCI][ico-styleci]][link-styleci]
+[![Scrutinizer Code Quality][ico-scrutinizer]][link-scrutinizer]
+[![Code Coverage][ico-scrutinizer-coverage]](https://scrutinizer-ci.com/g/ag84ark/aws-ses-bounce-complaint-handler/?branch=master)
 
 This is where your description should go. Take a look at [contributing.md](contributing.md) to see a to do list.
 
@@ -48,10 +50,14 @@ Please see the [license file](license.md) for more information.
 [ico-downloads]: https://img.shields.io/packagist/dt/ag84ark/aws-ses-bounce-complaint-handler.svg?style=flat-square
 [ico-travis]: https://img.shields.io/travis/ag84ark/aws-ses-bounce-complaint-handler/master.svg?style=flat-square
 [ico-styleci]: https://styleci.io/repos/280539001/shield
+[ico-scrutinizer]: https://scrutinizer-ci.com/g/ag84ark/aws-ses-bounce-complaint-handler/badges/quality-score.png?b=master
+[ico-scrutinizer-coverage]: https://scrutinizer-ci.com/g/ag84ark/aws-ses-bounce-complaint-handler/badges/coverage.png?b=master
 
 [link-packagist]: https://packagist.org/packages/ag84ark/aws-ses-bounce-complaint-handler
 [link-downloads]: https://packagist.org/packages/ag84ark/aws-ses-bounce-complaint-handler
 [link-travis]: https://travis-ci.org/ag84ark/aws-ses-bounce-complaint-handler
 [link-styleci]: https://styleci.io/repos/280539001
 [link-author]: https://github.com/ag84ark
+[link-scrutinizer]: https://scrutinizer-ci.com/g/ag84ark/aws-ses-bounce-complaint-handler/?branch=master
+[link-scrutinizer-coverage]: https://scrutinizer-ci.com/g/ag84ark/aws-ses-bounce-complaint-handler/?branch=master
 
