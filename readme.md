@@ -47,7 +47,7 @@ Please see the [license file](license.md) for more information.
 [ico-version]: https://img.shields.io/packagist/v/ag84ark/aws-ses-bounce-complaint-handler.svg?style=flat-square
 [ico-downloads]: https://img.shields.io/packagist/dt/ag84ark/aws-ses-bounce-complaint-handler.svg?style=flat-square
 [ico-travis]: https://img.shields.io/travis/ag84ark/aws-ses-bounce-complaint-handler/master.svg?style=flat-square
-[ico-styleci]: https://styleci.io/repos/12345678/shield
+[ico-styleci]: https://styleci.io/repos/280539001/shield
 
 [link-packagist]: https://packagist.org/packages/ag84ark/aws-ses-bounce-complaint-handler
 [link-downloads]: https://packagist.org/packages/ag84ark/aws-ses-bounce-complaint-handler
