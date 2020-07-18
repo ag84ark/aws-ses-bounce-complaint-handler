@@ -2,6 +2,7 @@
     "name": "ag84ark/aws-ses-bounce-complaint-handler",
     "description": ":package_description",
     "license": "MIT",
+    "version": "0.1",
     "authors": [
         {
             "name": "George Cojocaru",
