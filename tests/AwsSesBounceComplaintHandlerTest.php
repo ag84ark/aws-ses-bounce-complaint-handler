@@ -1,16 +1,13 @@
 <?php
 
-
 namespace ag84ark\AwsSesBounceComplaintHandler\Tests;
 
 use ag84ark\AwsSesBounceComplaintHandler\Facades\AwsSesBounceComplaintHandler;
 use ag84ark\AwsSesBounceComplaintHandler\Models\WrongEmail;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 
-
 class AwsSesBounceComplaintHandlerTest extends TestCase
 {
-
     use DatabaseMigrations;
 
     /** @test */
@@ -21,14 +18,13 @@ class AwsSesBounceComplaintHandlerTest extends TestCase
         WrongEmail::create(['email' => $email, 'problem_type' => 'Bounce', 'problem_subtype' => 'Permanent']);
 
         $this->assertFalse(AwsSesBounceComplaintHandler::canSendToEmail($email));
-
     }
 
     /** @test */
     public function it_handles_incoming_bounce_data_via_https(): void
     {
-        \Config::set("aws-ses-bounce-complaint-handler.route_secret", null);
-        \Config::set("aws-ses-bounce-complaint-handler.via_sqs", false);
+        \Config::set('aws-ses-bounce-complaint-handler.route_secret', null);
+        \Config::set('aws-ses-bounce-complaint-handler.via_sqs', false);
 
         $this->postJson('amazon-sns/notifications', $this->getAWSBounceData())
             ->assertSuccessful();
@@ -39,8 +35,8 @@ class AwsSesBounceComplaintHandlerTest extends TestCase
     /** @test */
     public function it_is_protected_by_secret_on_https_call(): void
     {
-        \Config::set("aws-ses-bounce-complaint-handler.route_secret", "someSecret");
-        \Config::set("aws-ses-bounce-complaint-handler.via_sqs", false);
+        \Config::set('aws-ses-bounce-complaint-handler.route_secret', 'someSecret');
+        \Config::set('aws-ses-bounce-complaint-handler.via_sqs', false);
 
         $this->postJson('amazon-sns/notifications', $this->getAWSBounceData())
             ->assertForbidden();
@@ -51,8 +47,8 @@ class AwsSesBounceComplaintHandlerTest extends TestCase
     /** @test */
     public function it_is_not_forbidden_when_password_is_set_and_via_sqs(): void
     {
-        \Config::set("aws-ses-bounce-complaint-handler.route_secret", "someSecret");
-        \Config::set("aws-ses-bounce-complaint-handler.via_sqs", true);
+        \Config::set('aws-ses-bounce-complaint-handler.route_secret', 'someSecret');
+        \Config::set('aws-ses-bounce-complaint-handler.via_sqs', true);
 
         $this->postJson('amazon-sns/notifications', $this->getAWSBounceData())
             ->assertStatus(422);
@@ -63,8 +59,8 @@ class AwsSesBounceComplaintHandlerTest extends TestCase
     /** @test */
     public function it_is_protected_by_secret_and_passes_on_https_call(): void
     {
-        \Config::set("aws-ses-bounce-complaint-handler.route_secret", "someSecret");
-        \Config::set("aws-ses-bounce-complaint-handler.via_sqs", false);
+        \Config::set('aws-ses-bounce-complaint-handler.route_secret', 'someSecret');
+        \Config::set('aws-ses-bounce-complaint-handler.via_sqs', false);
 
         $this->postJson('amazon-sns/notifications?secret=someSecret', $this->getAWSBounceData())
             ->assertSuccessful();
@@ -150,5 +146,4 @@ class AwsSesBounceComplaintHandlerTest extends TestCase
             return [];
         }
     }
-
 }

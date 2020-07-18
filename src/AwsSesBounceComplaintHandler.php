@@ -6,53 +6,47 @@ use ag84ark\AwsSesBounceComplaintHandler\Models\WrongEmail;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use Log;
 use Illuminate\Support\Facades\Response;
-
+use Log;
 
 class AwsSesBounceComplaintHandler
 {
-    public static function test() : string
+    public static function test(): string
     {
         return 'It Works!';
     }
 
     public function handleBounceOrComplaint(Request $request): JsonResponse
     {
-        if (!$request->json()) {
-            return Response::json(['status' => 422, "message" => 'error'], 422);
+        if (! $request->json()) {
+            return Response::json(['status' => 422, 'message' => 'error'], 422);
         }
 
         if (! $this->canPass($request)) {
-            return Response::json(['status' => 403, "message" => 'error'], 403);
+            return Response::json(['status' => 403, 'message' => 'error'], 403);
         }
 
         $data = $request->json()->all() ?? [];
 
         if (config('aws-ses-bounce-complaint-handler.log_requests')) {
-            Log::info("Logging AWS SES DATA");
-            Log::info( json_encode($data ) );
+            Log::info('Logging AWS SES DATA');
+            Log::info(json_encode($data));
         }
 
-
-
-        if($request->json('Type') === 'SubscriptionConfirmation') {
-            Log::info( json_encode($data ) );
-            Log::info("SubscriptionConfirmation came at: " . $data['Timestamp']);
+        if ($request->json('Type') === 'SubscriptionConfirmation') {
+            Log::info(json_encode($data));
+            Log::info('SubscriptionConfirmation came at: '.$data['Timestamp']);
         }
 
         $message = $this->getMessageData($request, $data);
 
-        if(! count($message)) {
-            return Response::json(['status' => 422, "data" => $data], 422);
+        if (! count($message)) {
+            return Response::json(['status' => 422, 'data' => $data], 422);
         }
 
-
-        if(! isset($message['notificationType'])) {
-            return Response::json(['status' => 200, "message" => 'no data']);
+        if (! isset($message['notificationType'])) {
+            return Response::json(['status' => 200, 'message' => 'no data']);
         }
-
-
 
         switch ($message['notificationType']) {
 
@@ -87,7 +81,7 @@ class AwsSesBounceComplaintHandler
 
         }
 
-        return Response::json(['status' => 200, "message" => 'success']);
+        return Response::json(['status' => 200, 'message' => 'success']);
     }
 
     public static function canSendToEmail(string $email): bool
@@ -99,7 +93,7 @@ class AwsSesBounceComplaintHandler
             ->get();
 
         foreach ($emails as $wrongEmail) {
-            if (!$wrongEmail->canBouncedSend()) {
+            if (! $wrongEmail->canBouncedSend()) {
                 return false;
             }
         }
@@ -123,6 +117,7 @@ class AwsSesBounceComplaintHandler
         } else {
             $message = $data;
         }
+
         return $message;
     }
 
@@ -132,16 +127,16 @@ class AwsSesBounceComplaintHandler
      */
     private function canPass(Request $request): bool
     {
-        if(config('aws-ses-bounce-complaint-handler.via_sqs')){
+        if (config('aws-ses-bounce-complaint-handler.via_sqs')) {
             return  true;
         }
 
         $secret = config('aws-ses-bounce-complaint-handler.route_secret');
-        if(! $secret) {
+        if (! $secret) {
             return  true;
         }
 
-        if($secret !== $request->get('secret')) {
+        if ($secret !== $request->get('secret')) {
             return  false;
         }
 
