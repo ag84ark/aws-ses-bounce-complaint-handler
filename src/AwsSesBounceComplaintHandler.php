@@ -6,7 +6,7 @@ use ag84ark\AwsSesBounceComplaintHandler\Models\WrongEmail;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Log;
+use Log;
 use Illuminate\Support\Facades\Response;
 
 
@@ -27,20 +27,29 @@ class AwsSesBounceComplaintHandler
             return Response::json(['status' => 403, "message" => 'error'], 403);
         }
 
-        if (config('aws-ses-bounce-complaint-handler.log_requests')) {
-            Log::info((string)$request->json()->all());
-        }
-
         $data = $request->json()->all() ?? [];
 
-        //if($request->json('Type') === 'SubscriptionConfirmation') {
-        //    Log::info("SubscriptionConfirmation came at: " . $data['Timestamp']);
-        //}
+        if (config('aws-ses-bounce-complaint-handler.log_requests')) {
+            Log::info("Logging AWS SES DATA");
+            Log::info( json_encode($data ) );
+        }
+
+
+
+        if($request->json('Type') === 'SubscriptionConfirmation') {
+            Log::info( json_encode($data ) );
+            Log::info("SubscriptionConfirmation came at: " . $data['Timestamp']);
+        }
 
         $message = $this->getMessageData($request, $data);
 
         if(! count($message)) {
             return Response::json(['status' => 422, "data" => $data], 422);
+        }
+
+
+        if(! isset($message['notificationType'])) {
+            return Response::json(['status' => 200, "message" => 'no data']);
         }
 
 
