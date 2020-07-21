@@ -40,17 +40,17 @@ class WrongEmail extends Model
 
     public function unsubscribed(): bool
     {
-        return $this->problem_type === 'complaint';
+        return $this->problem_type === 'Complaint';
     }
 
     public function dontSend(): bool
     {
-        return $this->problem_type === 'bounce' && $this->problem_subtype === 'Permanent';
+        return $this->problem_type === 'Bounce' && $this->problem_subtype === 'Permanent';
     }
 
     public function canBouncedSend(): bool
     {
-        return $this->problem_type === 'bounce'
+        return $this->problem_type === 'Bounce'
             && $this->problem_subtype !== 'Permanent'
             && $this->updated_at->diffInMinutes(config('aws-ses-bounce-complaint-handler.block_bounced_transient_for_minutes'));
     }

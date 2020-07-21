@@ -1,0 +1,69 @@
+{
+    "Type": "Notification",
+    "Message": {
+        "notificationType": "Bounce",
+        "bounce": {
+            "bounceType": "Permanent",
+            "bounceSubType": "General",
+            "bouncedRecipients": [
+                {
+                    "emailAddress": "bounce@simulator.amazonses.com",
+                    "action": "failed",
+                    "status": "5.1.1",
+                    "diagnosticCode": "smtp; 550 5.1.1 user unknown"
+                }
+            ],
+            "timestamp": "2017-09-05T02:30:25.645Z",
+            "feedbackId": "0101015e4fdfe031-818e3e45-3db7-4546-8bbf-6da232afc8e9-000000",
+            "remoteMtaIp": "207.171.163.188",
+            "reportingMTA": "dsn; a27-24.smtp-out.us-west-2.amazonses.com"
+        },
+        "mail": {
+            "timestamp": "2017-09-05T02:30:24.000Z",
+            "source": "bounce111@eder.com.au",
+            "sourceArn": "arn:aws:ses:us-west-2:154131996403:identity/eder.com",
+            "sourceIp": "54.240.230.242",
+            "sendingAccountId": "154131996403",
+            "messageId": "0101015e4fdfdb7f-a3dcaf07-8fb3-459f-9343-7859c0398c3f-000000",
+            "destination": [
+                "bounce@simulator.amazonses.com"
+            ],
+            "headersTruncated": false,
+            "headers": [
+                {
+                    "name": "From",
+                    "value": "bounce111@eder.com.au"
+                },
+                {
+                    "name": "To",
+                    "value": "bounce@simulator.amazonses.com"
+                },
+                {
+                    "name": "Subject",
+                    "value": "bounce@simulator.amazonses.com"
+                },
+                {
+                    "name": "MIME-Version",
+                    "value": "1.0"
+                },
+                {
+                    "name": "Content-Type",
+                    "value": "text/plain; charset=UTF-8"
+                },
+                {
+                    "name": "Content-Transfer-Encoding",
+                    "value": "7bit"
+                }
+            ],
+            "commonHeaders": {
+                "from": [
+                    "bounce111@eder.com.au"
+                ],
+                "to": [
+                    "bounce@simulator.amazonses.com"
+                ],
+                "subject": "bounce@simulator.amazonses.com"
+            }
+        }
+    }
+}
