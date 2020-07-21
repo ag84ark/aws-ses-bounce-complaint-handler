@@ -55,6 +55,12 @@ class AwsSesBounceComplaintHandlerServiceProvider extends ServiceProvider
             __DIR__.'/../config/aws-ses-bounce-complaint-handler.php' => config_path('aws-ses-bounce-complaint-handler.php'),
         ], 'aws-ses-bounce-complaint-handler.config');
 
+        if (! class_exists('CreateWrongEmailsTable')) {
+            $this->publishes([
+                __DIR__.'/../database/migrations/create_wrong_emails_table.php.stub' => database_path('migrations/'.date('Y_m_d_His', time()).'_create_wrong_emails_table.php'),
+            ], 'migrations');
+        }
+
         // Publishing the views.
         /*$this->publishes([
             __DIR__.'/../resources/views' => base_path('resources/views/vendor/ag84ark'),

@@ -13,7 +13,8 @@
     "homepage": "https://github.com/ag84ark/aws-ses-bounce-complaint-handler",
     "keywords": ["Laravel", "AwsSesBounceComplaintHandler", "aws-ses-bounce-complaint-handler", "aws ses bounce complaint handler"],
     "require": {
-        "illuminate/support": "~5|~6|~7"
+        "illuminate/support": "~5|~6|~7",
+        "guzzlehttp/guzzle": "^7.0"
     },
     "require-dev": {
         "phpunit/phpunit": "~7|~8",

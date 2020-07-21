@@ -12,6 +12,23 @@ use Log;
 
 class AwsSesBounceComplaintHandler
 {
+    public static function canSendToEmail(string $email): bool
+    {
+        /** @var WrongEmail[]|Collection $emails */
+        $emails = WrongEmail::active()
+            ->bounced()
+            ->where('email', '=', $email)
+            ->get();
+
+        foreach ($emails as $wrongEmail) {
+            if (! $wrongEmail->canBouncedSend()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     public function handleBounceOrComplaint(Request $request): JsonResponse
     {
         if (! $request->json()) {
@@ -26,7 +43,9 @@ class AwsSesBounceComplaintHandler
 
         $this->handleLoggingData($data);
 
-        $this->handleSubscriptionConfirmation($request, $data);
+        if ($info = $this->handleSubscriptionConfirmation($data)) {
+            return Response::json(['status' => 200, 'message' => $info]);
+        }
 
         $message = $this->getMessageData($request, $data);
 
@@ -43,21 +62,58 @@ class AwsSesBounceComplaintHandler
         return Response::json(['status' => 200, 'message' => 'success']);
     }
 
-    public static function canSendToEmail(string $email): bool
+    private function canPass(Request $request): bool
     {
-        /** @var WrongEmail[]|Collection $emails */
-        $emails = WrongEmail::active()
-            ->bounced()
-            ->where('email', '=', $email)
-            ->get();
+        if (config('aws-ses-bounce-complaint-handler.via_sqs')) {
+            return true;
+        }
 
-        foreach ($emails as $wrongEmail) {
-            if (! $wrongEmail->canBouncedSend()) {
-                return false;
-            }
+        $secret = config('aws-ses-bounce-complaint-handler.route_secret');
+        if (! $secret) {
+            return true;
+        }
+
+        if ($secret !== $request->get('secret')) {
+            return false;
         }
 
         return true;
+    }
+
+    private function handleLoggingData(array $data): void
+    {
+        if (config('aws-ses-bounce-complaint-handler.log_requests')) {
+            $dataCollection = collect($data);
+            Log::info('Logging AWS SES DATA');
+            Log::info($dataCollection->toJson());
+        }
+    }
+
+    public function handleSubscriptionConfirmation(array $data): ?string
+    {
+        try {
+            if (! isset($data['Type']) || 'SubscriptionConfirmation' !== $data['Type'] || ! config('aws-ses-bounce-complaint-handler.auto_subscribe')) {
+                return null;
+            }
+            Log::info('SubscriptionConfirmation came at: '.$data['Timestamp']);
+
+            $client = new Client();
+
+            $res = $client->get($data['SubscribeURL']);
+
+            if (200 === $res->getStatusCode()) {
+                $message = 'SubscriptionConfirmation was auto confirmed!';
+                Log::info($message);
+            } else {
+                $message = 'SubscriptionConfirmation could not be auto confirmed!';
+                Log::warning($message);
+                Log::info($data['SubscribeURL']);
+            }
+
+            return $message;
+        } catch (\Exception $exception) {
+            return  $exception->getMessage();
+        }
     }
 
     /**
@@ -78,42 +134,6 @@ class AwsSesBounceComplaintHandler
         return $message;
     }
 
-    private function canPass(Request $request): bool
-    {
-        if (config('aws-ses-bounce-complaint-handler.via_sqs')) {
-            return  true;
-        }
-
-        $secret = config('aws-ses-bounce-complaint-handler.route_secret');
-        if (! $secret) {
-            return  true;
-        }
-
-        if ($secret !== $request->get('secret')) {
-            return  false;
-        }
-
-        return true;
-    }
-
-    private function handleSubscriptionConfirmation(Request $request, array $data): void
-    {
-        if ('SubscriptionConfirmation' !== $request->json('Type')) {
-            return;
-        }
-        Log::info('SubscriptionConfirmation came at: '.$data['Timestamp']);
-
-        $client = new Client();
-        $res = $client->get($data['SubscribeURL']);
-
-        if (200 === $res->getStatusCode()) {
-            Log::info('SubscriptionConfirmation was auto confirmed!');
-        } else {
-            Log::warning('SubscriptionConfirmation could not be auto confirmed!');
-            Log::info($data['SubscribeURL']);
-        }
-    }
-
     /**
      * @param $message
      */
@@ -122,28 +142,13 @@ class AwsSesBounceComplaintHandler
         switch ($message['notificationType']) {
             case 'Bounce':
                 $bounce = $message['bounce'];
-                $subtype = $bounce['bounceType'];
-                foreach ($bounce['bouncedRecipients'] as $bouncedRecipient) {
-                    $emailAddress = $bouncedRecipient['emailAddress'];
-
-                    $emailRecord = WrongEmail::firstOrCreate(['email' => $emailAddress, 'problem_type' => 'Bounce', 'problem_subtype' => $subtype]);
-                    if ($emailRecord) {
-                        $emailRecord->increment('repeated_attempts', 1);
-                    }
-                }
+                $this->saveBouncedEmailsToDB($bounce);
 
                 break;
 
             case 'Complaint':
                 $complaint = $message['complaint'];
-                $subtype = $complaint['complaintFeedbackType'] ?? '';
-                foreach ($complaint['complainedRecipients'] as $complainedRecipient) {
-                    $emailAddress = $complainedRecipient['emailAddress'];
-                    $emailRecord = WrongEmail::firstOrCreate(['email' => $emailAddress, 'problem_type' => 'Complaint', 'problem_subtype' => $subtype]);
-                    if ($emailRecord) {
-                        $emailRecord->increment('repeated_attempts', 1);
-                    }
-                }
+                $this->saveComplainedEmailsToDB($complaint);
 
                 break;
 
@@ -153,12 +158,34 @@ class AwsSesBounceComplaintHandler
         }
     }
 
-    private function handleLoggingData(array $data): void
+    /**
+     * @param $bounce
+     */
+    private function saveBouncedEmailsToDB($bounce): void
     {
-        if (config('aws-ses-bounce-complaint-handler.log_requests')) {
-            $dataCollection = collect($data);
-            Log::info('Logging AWS SES DATA');
-            Log::info($dataCollection->toJson());
+        $subtype = $bounce['bounceType'];
+        foreach ($bounce['bouncedRecipients'] as $bouncedRecipient) {
+            $emailAddress = $bouncedRecipient['emailAddress'];
+
+            $emailRecord = WrongEmail::firstOrCreate(['email' => $emailAddress, 'problem_type' => 'Bounce', 'problem_subtype' => $subtype]);
+            if ($emailRecord) {
+                $emailRecord->increment('repeated_attempts', 1);
+            }
+        }
+    }
+
+    /**
+     * @param $complaint
+     */
+    private function saveComplainedEmailsToDB($complaint): void
+    {
+        $subtype = $complaint['complaintFeedbackType'] ?? '';
+        foreach ($complaint['complainedRecipients'] as $complainedRecipient) {
+            $emailAddress = $complainedRecipient['emailAddress'];
+            $emailRecord = WrongEmail::firstOrCreate(['email' => $emailAddress, 'problem_type' => 'Complaint', 'problem_subtype' => $subtype]);
+            if ($emailRecord) {
+                $emailRecord->increment('repeated_attempts', 1);
+            }
         }
     }
 }

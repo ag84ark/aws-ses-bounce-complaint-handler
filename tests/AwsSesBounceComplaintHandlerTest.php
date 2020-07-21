@@ -4,11 +4,11 @@ namespace ag84ark\AwsSesBounceComplaintHandler\Tests;
 
 use ag84ark\AwsSesBounceComplaintHandler\Facades\AwsSesBounceComplaintHandler;
 use ag84ark\AwsSesBounceComplaintHandler\Models\WrongEmail;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class AwsSesBounceComplaintHandlerTest extends TestCase
 {
-    use DatabaseMigrations;
+    use RefreshDatabase;
 
     /** @test */
     public function it_can_not_send_to_permanent_bounce(): void
@@ -42,6 +42,13 @@ class AwsSesBounceComplaintHandlerTest extends TestCase
         $this->assertDatabaseHas((new WrongEmail())->getTable(), ['email' => 'bounce@simulator.amazonses.com']);
     }
 
+    private function getAWSBounceData(): array
+    {
+        $requestData = file_get_contents(__DIR__.'/json/aws_bounce_response.json');
+
+        return json_decode($requestData, true);
+    }
+
     /** @test */
     public function it_handles_incoming_complaint_data_via_https(): void
     {
@@ -52,6 +59,13 @@ class AwsSesBounceComplaintHandlerTest extends TestCase
             ->assertSuccessful();
 
         $this->assertDatabaseHas((new WrongEmail())->getTable(), ['email' => 'bounce@simulator.amazonses.com']);
+    }
+
+    private function getAWSComplaintData(): array
+    {
+        $requestData = file_get_contents(__DIR__.'/json/aws_complaint_response.json');
+
+        return json_decode($requestData, true);
     }
 
     /** @test */
@@ -78,6 +92,13 @@ class AwsSesBounceComplaintHandlerTest extends TestCase
         $this->assertDatabaseHas((new WrongEmail())->getTable(), ['email' => 'bounce@simulator.amazonses.com']);
     }
 
+    private function getAWSBounceSQSData(): array
+    {
+        $requestData = file_get_contents(__DIR__.'/json/sqs_aws_bounce_response.json');
+
+        return json_decode($requestData, true);
+    }
+
     /** @test */
     public function it_is_protected_by_secret_and_passes_on_https_call(): void
     {
@@ -94,28 +115,33 @@ class AwsSesBounceComplaintHandlerTest extends TestCase
     public function log_the_data(): void
     {
         \Config::set('aws-ses-bounce-complaint-handler.log_requests', true);
+
         $this->postJson('amazon-sns/notifications?secret=someSecret', $this->getAWSBounceData())
             ->assertSuccessful();
     }
 
-    private function getAWSBounceData(): array
+    /** @test */
+    public function it_auto_confirms_the_subscription_to_https(): void
     {
-        $requestData = file_get_contents(__DIR__.'/json/aws_bounce_response.json');
+        $this->postJson('amazon-sns/notifications', $this->getAWSSubscriptionConfirmationData())
+            ->assertSuccessful()
+            ->assertJson(['message' => 'SubscriptionConfirmation was auto confirmed!']);
+    }
+
+    private function getAWSSubscriptionConfirmationData(): array
+    {
+        $requestData = file_get_contents(__DIR__.'/json/aws_sns_subscription_confirmation.json');
 
         return json_decode($requestData, true);
     }
 
-    private function getAWSComplaintData(): array
+    /** @test */
+    public function does_not_auto_confirms_the_subscription_to_https(): void
     {
-        $requestData = file_get_contents(__DIR__.'/json/aws_complaint_response.json');
+        \Config::set('aws-ses-bounce-complaint-handler.auto_subscribe', false);
 
-        return json_decode($requestData, true);
-    }
-
-    private function getAWSBounceSQSData(): array
-    {
-        $requestData = file_get_contents(__DIR__.'/json/sqs_aws_bounce_response.json');
-
-        return json_decode($requestData, true);
+        $this->postJson('amazon-sns/notifications', $this->getAWSSubscriptionConfirmationData())
+            ->assertSuccessful()
+            ->assertJson(['message' => 'no data']);
     }
 }
