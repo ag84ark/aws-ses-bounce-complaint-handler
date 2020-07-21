@@ -12,11 +12,6 @@ use Log;
 
 class AwsSesBounceComplaintHandler
 {
-    public static function test(): string
-    {
-        return 'It Works!';
-    }
-
     public function handleBounceOrComplaint(Request $request): JsonResponse
     {
         if (! $request->json()) {
@@ -140,7 +135,7 @@ class AwsSesBounceComplaintHandler
                 break;
 
             case 'Complaint':
-                $complaint = $message;
+                $complaint = $message['complaint'];
                 $subtype = $complaint['complaintFeedbackType'] ?? '';
                 foreach ($complaint['complainedRecipients'] as $complainedRecipient) {
                     $emailAddress = $complainedRecipient['emailAddress'];

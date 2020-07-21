@@ -21,12 +21,34 @@ class AwsSesBounceComplaintHandlerTest extends TestCase
     }
 
     /** @test */
+    public function it_can_send_email(): void
+    {
+        $email = 'me@me.com';
+
+        factory(WrongEmail::class, 5)->create(['problem_type' => 'Bounce', 'problem_subtype' => 'Permanent']);
+
+        $this->assertTrue(AwsSesBounceComplaintHandler::canSendToEmail($email));
+    }
+
+    /** @test */
     public function it_handles_incoming_bounce_data_via_https(): void
     {
         \Config::set('aws-ses-bounce-complaint-handler.route_secret', null);
         \Config::set('aws-ses-bounce-complaint-handler.via_sqs', false);
 
         $this->postJson('amazon-sns/notifications', $this->getAWSBounceData())
+            ->assertSuccessful();
+
+        $this->assertDatabaseHas((new WrongEmail())->getTable(), ['email' => 'bounce@simulator.amazonses.com']);
+    }
+
+    /** @test */
+    public function it_handles_incoming_complaint_data_via_https(): void
+    {
+        \Config::set('aws-ses-bounce-complaint-handler.route_secret', null);
+        \Config::set('aws-ses-bounce-complaint-handler.via_sqs', false);
+
+        $this->postJson('amazon-sns/notifications', $this->getAWSComplaintData())
             ->assertSuccessful();
 
         $this->assertDatabaseHas((new WrongEmail())->getTable(), ['email' => 'bounce@simulator.amazonses.com']);
@@ -68,9 +90,24 @@ class AwsSesBounceComplaintHandlerTest extends TestCase
         $this->assertDatabaseHas((new WrongEmail())->getTable(), ['email' => 'bounce@simulator.amazonses.com']);
     }
 
+    /** @test */
+    public function log_the_data(): void
+    {
+        \Config::set('aws-ses-bounce-complaint-handler.log_requests', true);
+        $this->postJson('amazon-sns/notifications?secret=someSecret', $this->getAWSBounceData())
+            ->assertSuccessful();
+    }
+
     private function getAWSBounceData(): array
     {
         $requestData = file_get_contents(__DIR__.'/json/aws_bounce_response.json');
+
+        return json_decode($requestData, true);
+    }
+
+    private function getAWSComplaintData(): array
+    {
+        $requestData = file_get_contents(__DIR__.'/json/aws_complaint_response.json');
 
         return json_decode($requestData, true);
     }

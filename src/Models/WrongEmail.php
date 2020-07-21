@@ -46,7 +46,7 @@ class WrongEmail extends Model
 
     public function dontSend(): bool
     {
-        return 'Bounce' === $this->problem_type && 'Permanent' === $this->problem_subtype;
+        return ('Bounce' === $this->problem_type && 'Permanent' === $this->problem_subtype) || 'Complaint' === $this->problem_type;
     }
 
     public function canBouncedSend(): bool
