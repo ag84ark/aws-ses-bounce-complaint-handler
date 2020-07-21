@@ -1,5 +1,7 @@
 # Aws Ses Bounce Complaint Helper
 
+
+[![GitHub build status][ico-github]][link-github]
 [![Latest Version on Packagist][ico-version]][link-packagist]
 [![Total Downloads][ico-downloads]][link-downloads]
 [![Build Status][ico-travis]][link-travis]
@@ -115,6 +117,7 @@ If you discover any security related issues, please email author email instead o
 
 Please see the [license file](license.md) for more information.
 
+[ico-github]: https://github.com/ag84ark/aws-ses-bounce-complaint-handler/workflows/run-tests/badge.svg
 [ico-version]: https://img.shields.io/packagist/v/ag84ark/aws-ses-bounce-complaint-handler.svg?style=flat-square
 [ico-downloads]: https://img.shields.io/packagist/dt/ag84ark/aws-ses-bounce-complaint-handler.svg?style=flat-square
 [ico-travis]: https://img.shields.io/travis/ag84ark/aws-ses-bounce-complaint-handler/master.svg?style=flat-square
@@ -122,6 +125,7 @@ Please see the [license file](license.md) for more information.
 [ico-scrutinizer]: https://scrutinizer-ci.com/g/ag84ark/aws-ses-bounce-complaint-handler/badges/quality-score.png?b=master
 [ico-scrutinizer-coverage]: https://scrutinizer-ci.com/g/ag84ark/aws-ses-bounce-complaint-handler/badges/coverage.png?b=master
 
+[link-github]: https://github.com/ag84ark/aws-ses-bounce-complaint-handler/actions
 [link-packagist]: https://packagist.org/packages/ag84ark/aws-ses-bounce-complaint-handler
 [link-downloads]: https://packagist.org/packages/ag84ark/aws-ses-bounce-complaint-handler
 [link-travis]: https://travis-ci.org/ag84ark/aws-ses-bounce-complaint-handler

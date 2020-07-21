@@ -15,10 +15,13 @@ jobs:
         include:
           - laravel: 7.*
             testbench: 5.*
+            guzzle: 7.*
           - laravel: 6.*
             testbench: 4.*
+            guzzle: 7.*
           - laravel: 5.8.*
             testbench: 3.*.*
+            guzzle: 6.*
 
     name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.dependency-version }} - ${{ matrix.os }}
 
