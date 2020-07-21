@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     // use /amazon-sns/notifications?&secret=mySecret on the declared route for extra protection
     'route_secret' => null,
 

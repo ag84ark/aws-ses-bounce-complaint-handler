@@ -7,6 +7,9 @@ $finder = Symfony\Component\Finder\Finder::create()
     ->in([
         __DIR__ . '/src',
         __DIR__ . '/tests',
+        __DIR__ . '/database',
+        __DIR__ . '/routes',
+        __DIR__ . '/config',
     ])
     ->name('*.php')
     ->notName('*.blade.php')
