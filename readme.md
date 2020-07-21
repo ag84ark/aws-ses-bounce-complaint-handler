@@ -117,7 +117,7 @@ If you discover any security related issues, please email author email instead o
 
 Please see the [license file](license.md) for more information.
 
-[ico-github]: https://github.com/ag84ark/aws-ses-bounce-complaint-handler/workflows/run-tests/badge.svg
+[ico-github]: https://github.com/ag84ark/aws-ses-bounce-complaint-handler/workflows/Tests/badge.svg
 [ico-version]: https://img.shields.io/packagist/v/ag84ark/aws-ses-bounce-complaint-handler.svg?style=flat-square
 [ico-downloads]: https://img.shields.io/packagist/dt/ag84ark/aws-ses-bounce-complaint-handler.svg?style=flat-square
 [ico-travis]: https://img.shields.io/travis/ag84ark/aws-ses-bounce-complaint-handler/master.svg?style=flat-square
