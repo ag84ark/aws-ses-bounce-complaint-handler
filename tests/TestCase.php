@@ -14,7 +14,6 @@ abstract class TestCase extends Orchestra
 
     public function getEnvironmentSetUp($app) : void
     {
-
         $app['config']->set('database.default', 'sqlite');
         $app['config']->set('database.connections.sqlite', [
            'driver' => 'sqlite',
@@ -24,7 +23,6 @@ abstract class TestCase extends Orchestra
 
         include_once __DIR__ . '/../database/migrations/2020_07_17_204234_create_wrong_emails_table.php';
         (new \CreateWrongEmailsTable())->up();
-
     }
 
     protected function setUp(): void

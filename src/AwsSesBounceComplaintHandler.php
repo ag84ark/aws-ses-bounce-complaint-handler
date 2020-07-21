@@ -121,9 +121,9 @@ class AwsSesBounceComplaintHandler
         $client = new Client();
         $res = $client->get($data['SubscribeURL']);
 
-        if ($res->getStatusCode() === 200){
+        if ($res->getStatusCode() === 200) {
             Log::info("SubscriptionConfirmation was auto confirmed!");
-        }else{
+        } else {
             Log::warning("SubscriptionConfirmation could not be auto confirmed!");
             Log::info($data['SubscribeURL']);
         }
@@ -147,6 +147,7 @@ class AwsSesBounceComplaintHandler
                         $emailRecord->increment('repeated_attempts', 1);
                     }
                 }
+
                 break;
 
             case 'Complaint':
@@ -159,6 +160,7 @@ class AwsSesBounceComplaintHandler
                         $emailRecord->increment('repeated_attempts', 1);
                     }
                 }
+
                 break;
 
             default:

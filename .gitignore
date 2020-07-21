@@ -6,3 +6,4 @@ composer.lock
 /.phpunit.result.cache
 /coverage.clover
 .idea
+/.php_cs.cache
