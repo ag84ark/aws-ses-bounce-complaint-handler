@@ -1,7 +1,7 @@
 <?php
 
 use ag84ark\AwsSesBounceComplaintHandler\Models\WrongEmail;
-use \Faker\Generator;
+use Faker\Generator;
 
 $factory->define(WrongEmail::class, function (Generator $faker) {
     return [

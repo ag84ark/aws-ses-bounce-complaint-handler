@@ -17,7 +17,6 @@ class AwsSesBounceComplaintHandlerTest extends TestCase
 
         factory(WrongEmail::class)->create(['email' => $email, 'problem_type' => 'Bounce', 'problem_subtype' => 'Permanent']);
 
-
         $this->assertFalse(AwsSesBounceComplaintHandler::canSendToEmail($email));
     }
 
@@ -69,22 +68,16 @@ class AwsSesBounceComplaintHandlerTest extends TestCase
         $this->assertDatabaseHas((new WrongEmail())->getTable(), ['email' => 'bounce@simulator.amazonses.com']);
     }
 
-    /**
-     * @return array
-     */
     private function getAWSBounceData(): array
     {
-        $requestData = file_get_contents(__DIR__ . '/json/aws_bounce_response.json');
+        $requestData = file_get_contents(__DIR__.'/json/aws_bounce_response.json');
 
         return json_decode($requestData, true);
     }
 
-    /**
-     * @return array
-     */
     private function getAWSBounceSQSData(): array
     {
-        $requestData = file_get_contents(__DIR__ . '/json/sqs_aws_bounce_response.json');
+        $requestData = file_get_contents(__DIR__.'/json/sqs_aws_bounce_response.json');
 
         return json_decode($requestData, true);
     }

@@ -8,14 +8,15 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * ag84ark\AwsSesBounceComplaintHandler\Models\WrongEmail.
  *
- * @property int $id
- * @property string $email
- * @property string $problem_type
- * @property string $problem_subtype
- * @property int $repeated_attempts
- * @property int $ignore
+ * @property int                             $id
+ * @property string                          $email
+ * @property string                          $problem_type
+ * @property string                          $problem_subtype
+ * @property int                             $repeated_attempts
+ * @property int                             $ignore
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\ag84ark\AwsSesBounceComplaintHandler\Models\WrongEmail active()
  * @method static \Illuminate\Database\Eloquent\Builder|\ag84ark\AwsSesBounceComplaintHandler\Models\WrongEmail bounced()
  * @method static \Illuminate\Database\Eloquent\Builder|\ag84ark\AwsSesBounceComplaintHandler\Models\WrongEmail complained()
@@ -40,26 +41,25 @@ class WrongEmail extends Model
 
     public function unsubscribed(): bool
     {
-        return $this->problem_type === 'Complaint';
+        return 'Complaint' === $this->problem_type;
     }
 
     public function dontSend(): bool
     {
-        return $this->problem_type === 'Bounce' && $this->problem_subtype === 'Permanent';
+        return 'Bounce' === $this->problem_type && 'Permanent' === $this->problem_subtype;
     }
 
     public function canBouncedSend(): bool
     {
-        return $this->problem_type === 'Bounce'
-            && $this->problem_subtype !== 'Permanent'
+        return 'Bounce' === $this->problem_type
+            && 'Permanent' !== $this->problem_subtype
             && $this->updated_at->diffInMinutes(config('aws-ses-bounce-complaint-handler.block_bounced_transient_for_minutes'));
     }
 
     /**
      * Scope a query to only include popular users.
      *
-     * @param  Builder  $query
-     * @return Builder
+     * @param Builder $query
      */
     public function scopeBounced($query): Builder
     {
@@ -69,8 +69,7 @@ class WrongEmail extends Model
     /**
      * Scope a query to only include popular users.
      *
-     * @param  Builder  $query
-     * @return Builder
+     * @param Builder $query
      */
     public function scopeComplained($query): Builder
     {

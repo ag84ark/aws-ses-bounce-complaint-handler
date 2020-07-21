@@ -12,7 +12,7 @@ abstract class TestCase extends Orchestra
         return [AwsSesBounceComplaintHandlerServiceProvider::class];
     }
 
-    public function getEnvironmentSetUp($app) : void
+    public function getEnvironmentSetUp($app): void
     {
         $app['config']->set('database.default', 'sqlite');
         $app['config']->set('database.connections.sqlite', [
@@ -21,7 +21,7 @@ abstract class TestCase extends Orchestra
            'prefix' => '',
         ]);
 
-        include_once __DIR__ . '/../database/migrations/2020_07_17_204234_create_wrong_emails_table.php';
+        include_once __DIR__.'/../database/migrations/2020_07_17_204234_create_wrong_emails_table.php';
         (new \CreateWrongEmailsTable())->up();
     }
 
@@ -29,6 +29,6 @@ abstract class TestCase extends Orchestra
     {
         parent::setUp();
 
-        $this->withFactories(__DIR__ . '/../database/factories');
+        $this->withFactories(__DIR__.'/../database/factories');
     }
 }

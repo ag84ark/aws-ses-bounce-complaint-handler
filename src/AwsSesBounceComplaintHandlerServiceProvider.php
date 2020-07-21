@@ -8,15 +8,13 @@ class AwsSesBounceComplaintHandlerServiceProvider extends ServiceProvider
 {
     /**
      * Perform post-registration booting of services.
-     *
-     * @return void
      */
     public function boot(): void
     {
         // $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'ag84ark');
         // $this->loadViewsFrom(__DIR__.'/../resources/views', 'ag84ark');
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
-        $this->loadRoutesFrom(__DIR__ . '/../routes/routes.php');
+        $this->loadRoutesFrom(__DIR__.'/../routes/routes.php');
 
         // Publishing is only necessary when using the CLI.
         if ($this->app->runningInConsole()) {
@@ -35,14 +33,12 @@ class AwsSesBounceComplaintHandlerServiceProvider extends ServiceProvider
 
         // Register the service the package provides.
         $this->app->singleton('aws-ses-bounce-complaint-handler', function ($app) {
-            return new AwsSesBounceComplaintHandler;
+            return new AwsSesBounceComplaintHandler();
         });
     }
 
     /**
      * Get the services provided by the provider.
-     *
-     * @return array
      */
     public function provides(): array
     {
@@ -51,8 +47,6 @@ class AwsSesBounceComplaintHandlerServiceProvider extends ServiceProvider
 
     /**
      * Console-specific booting.
-     *
-     * @return void
      */
     protected function bootForConsole(): void
     {

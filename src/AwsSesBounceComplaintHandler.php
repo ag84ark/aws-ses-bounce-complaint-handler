@@ -66,8 +66,6 @@ class AwsSesBounceComplaintHandler
     }
 
     /**
-     * @param Request $request
-     * @param array $data
      * @return array|mixed|\Symfony\Component\HttpFoundation\ParameterBag|null
      */
     private function getMessageData(Request $request, array $data)
@@ -75,7 +73,7 @@ class AwsSesBounceComplaintHandler
         $message = [];
 
         if (config('aws-ses-bounce-complaint-handler.via_sqs')) {
-            if ($request->json('Type') === 'Notification') {
+            if ('Notification' === $request->json('Type')) {
                 $message = $request->json('Message');
             }
         } else {
@@ -85,10 +83,6 @@ class AwsSesBounceComplaintHandler
         return $message;
     }
 
-    /**
-     * @param Request $request
-     * @return bool
-     */
     private function canPass(Request $request): bool
     {
         if (config('aws-ses-bounce-complaint-handler.via_sqs')) {
@@ -107,24 +101,20 @@ class AwsSesBounceComplaintHandler
         return true;
     }
 
-    /**
-     * @param Request $request
-     * @param array $data
-     */
     private function handleSubscriptionConfirmation(Request $request, array $data): void
     {
-        if ($request->json('Type') !== 'SubscriptionConfirmation') {
+        if ('SubscriptionConfirmation' !== $request->json('Type')) {
             return;
         }
-        Log::info('SubscriptionConfirmation came at: ' . $data['Timestamp']);
+        Log::info('SubscriptionConfirmation came at: '.$data['Timestamp']);
 
         $client = new Client();
         $res = $client->get($data['SubscribeURL']);
 
-        if ($res->getStatusCode() === 200) {
-            Log::info("SubscriptionConfirmation was auto confirmed!");
+        if (200 === $res->getStatusCode()) {
+            Log::info('SubscriptionConfirmation was auto confirmed!');
         } else {
-            Log::warning("SubscriptionConfirmation could not be auto confirmed!");
+            Log::warning('SubscriptionConfirmation could not be auto confirmed!');
             Log::info($data['SubscribeURL']);
         }
     }
@@ -135,7 +125,6 @@ class AwsSesBounceComplaintHandler
     private function storeEmailToDB($message): void
     {
         switch ($message['notificationType']) {
-
             case 'Bounce':
                 $bounce = $message['bounce'];
                 $subtype = $bounce['bounceType'];
@@ -166,13 +155,9 @@ class AwsSesBounceComplaintHandler
             default:
                 // Do Nothing
                 break;
-
         }
     }
 
-    /**
-     * @param array $data
-     */
     private function handleLoggingData(array $data): void
     {
         if (config('aws-ses-bounce-complaint-handler.log_requests')) {
