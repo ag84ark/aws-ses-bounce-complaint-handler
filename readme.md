@@ -21,21 +21,34 @@ Via Composer
 $ composer require ag84ark/aws-ses-bounce-complaint-handler
 ```
 
-
-You can publish and run the migrations with:
+---
+Publish the migration and run them with:
 
 ```bash
 php artisan vendor:publish --provider="ag84ark\AwsSesBounceComplaintHandler\AwsSesBounceComplaintHandlerServiceProvider" --tag="migrations"
 php artisan migrate
 ```
 
-
+---
 You can publish the config file with:
 ```bash
 php artisan vendor:publish --provider="ag84ark\AwsSesBounceComplaintHandler\AwsSesBounceComplaintHandlerServiceProvider" --tag="config"
 ```
+---
+Add the route to the except list in  App\Http\Middleware\VerifyCsrfToken.php 
+```php
+class VerifyCsrfToken extends Middleware
+{
+    protected $except = [
+        // ... 
+        'amazon-sns/notifications'
+    ];
+}
+```
 
-Add link in AWS SNS for AWS SES email bounce and complains to: /amazon-sns/notifications
+Add link in AWS SNS for AWS SES email bounce and complains to: /amazon-sns/notifications  
+
+---
 
 ## Usage
 
