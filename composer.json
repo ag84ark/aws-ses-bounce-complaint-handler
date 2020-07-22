@@ -2,7 +2,7 @@
     "name": "ag84ark/aws-ses-bounce-complaint-handler",
     "description": "Helper for handling AWS SES with SNS",
     "license": "MIT",
-    "version": "0.1",
+    "version": "0.2.1",
     "authors": [
         {
             "name": "George Cojocaru",
