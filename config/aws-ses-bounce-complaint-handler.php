@@ -18,6 +18,7 @@ return [
 
     /*
      * Use Amazon SQS or HTTP(s)
+     * Be sure to check "Enable raw message delivery"
      */
     'via_sqs' => false,
 

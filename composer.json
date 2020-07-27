@@ -20,7 +20,8 @@
         "mockery/mockery": "^1.1",
         "orchestra/testbench": "~3|~4|~5",
         "sempro/phpunit-pretty-print": "^1.0",
-        "friendsofphp/php-cs-fixer": "^2.16"
+        "friendsofphp/php-cs-fixer": "^2.16",
+        "ext-json": "*"
     },
     "autoload": {
         "psr-4": {

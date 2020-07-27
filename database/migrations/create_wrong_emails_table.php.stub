@@ -13,7 +13,7 @@ class CreateWrongEmailsTable extends Migration
             $table->string('email', 60);
             $table->string('problem_type', 30);
             $table->string('problem_subtype', 30);
-            $table->unsignedInteger('repeated_attempts')->default(1);
+            $table->unsignedInteger('repeated_attempts')->default(0);
             $table->boolean('ignore')->default(false);
 
             $table->timestamps();

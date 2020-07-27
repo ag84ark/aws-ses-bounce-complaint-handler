@@ -47,6 +47,7 @@ class VerifyCsrfToken extends Middleware
 ```
 
 Add link in AWS SNS for AWS SES email bounce and complains to: /amazon-sns/notifications  
+Also be sure to check the __Enable raw message delivery__ option  
 
 ---
 
@@ -62,12 +63,15 @@ To stop emails from being sent to unsafe email addresses automatically
 Add in App\Providers\EventServiceProvider.php
 
 ```php
-protected $listen = [
+class EventServiceProvider {
+
+    protected $listen = [
         // ...
         Illuminate\Mail\Events\MessageSending::class => [
             App\Listeners\CheckEmailAddressBeforeSending::class,
         ],
     ];
+}
 ```
 
 In  App\Listeners\CheckEmailAddressBeforeSending.php

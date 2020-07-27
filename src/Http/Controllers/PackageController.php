@@ -6,11 +6,20 @@ use ag84ark\AwsSesBounceComplaintHandler\Models\WrongEmail;
 use GuzzleHttp\Client;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
-use Log;
 
 class PackageController
 {
+    protected $data = [];
+    protected $message = [];
+    protected $client;
+
+    public function __construct(Client $client)
+    {
+        $this->client = $client ?: new Client();
+    }
+
     public function handleBounceOrComplaint(Request $request): JsonResponse
     {
         if (! $request->json()) {
@@ -21,25 +30,25 @@ class PackageController
             return Response::json(['status' => 403, 'message' => 'error'], 403);
         }
 
-        $data = $request->json()->all() ?? [];
+        $this->data = $request->json()->all() ?? [];
 
-        $this->handleLoggingData($data);
+        $this->handleLoggingData();
 
-        if ($info = $this->handleSubscriptionConfirmation($data)) {
+        if ($info = $this->handleSubscriptionConfirmation()) {
             return Response::json(['status' => 200, 'message' => $info]);
         }
 
-        $message = $this->getMessageData($request, $data);
+        $this->getMessageData();
 
-        if (! count($message)) {
-            return Response::json(['status' => 422, 'data' => $data], 422);
+        if (! count($this->message)) {
+            return Response::json(['status' => 422, 'data' => $this->data], 422);
         }
 
-        if (! isset($message['notificationType'])) {
+        if (! isset($this->message['notificationType'])) {
             return Response::json(['status' => 200, 'message' => 'no data']);
         }
 
-        $this->storeEmailToDB($message);
+        $this->storeEmailToDB();
 
         return Response::json(['status' => 200, 'message' => 'success']);
     }
@@ -62,26 +71,24 @@ class PackageController
         return true;
     }
 
-    private function handleLoggingData(array $data): void
+    private function handleLoggingData(): void
     {
         if (config('aws-ses-bounce-complaint-handler.log_requests')) {
-            $dataCollection = collect($data);
+            $dataCollection = collect($this->data);
             Log::info('Logging AWS SES DATA');
             Log::info($dataCollection->toJson());
         }
     }
 
-    private function handleSubscriptionConfirmation(array $data): ?string
+    private function handleSubscriptionConfirmation(): ?string
     {
         try {
-            if (! isset($data['Type']) || 'SubscriptionConfirmation' !== $data['Type'] || ! config('aws-ses-bounce-complaint-handler.auto_subscribe')) {
+            if (! isset($this->data['Type']) || 'SubscriptionConfirmation' !== $this->data['Type'] || ! config('aws-ses-bounce-complaint-handler.auto_subscribe')) {
                 return null;
             }
-            Log::info('SubscriptionConfirmation came at: '.$data['Timestamp']);
+            Log::info('SubscriptionConfirmation came at: '.$this->data['Timestamp']);
 
-            $client = new Client();
-
-            $res = $client->get($data['SubscribeURL']);
+            $res = $this->client->get($this->data['SubscribeURL']);
 
             if (200 === $res->getStatusCode()) {
                 $message = 'SubscriptionConfirmation was auto confirmed!';
@@ -89,7 +96,7 @@ class PackageController
             } else {
                 $message = 'SubscriptionConfirmation could not be auto confirmed!';
                 Log::warning($message);
-                Log::info($data['SubscribeURL']);
+                Log::info($this->data['SubscribeURL']);
             }
 
             return $message;
@@ -98,29 +105,21 @@ class PackageController
         }
     }
 
-    /**
-     * @return array|mixed|\Symfony\Component\HttpFoundation\ParameterBag|null
-     */
-    private function getMessageData(Request $request, array $data)
+    private function getMessageData(): void
     {
-        $message = [];
-
         if (config('aws-ses-bounce-complaint-handler.via_sqs')) {
-            if ('Notification' === $request->json('Type')) {
-                $message = $request->json('Message');
+            if ('Notification' === $this->data['Type']) {
+                $this->message = $this->data['Message'];
             }
         } else {
-            $message = $data;
+            $this->message = $this->data;
         }
-
-        return $message;
     }
 
-    /**
-     * @param $message
-     */
-    private function storeEmailToDB($message): void
+    private function storeEmailToDB(): void
     {
+        $message = $this->message;
+
         switch ($message['notificationType']) {
             case 'Bounce':
                 $bounce = $message['bounce'];
