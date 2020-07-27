@@ -7,7 +7,6 @@ use Illuminate\Support\Collection;
 
 class AwsSesBounceComplaintHandler
 {
-
     public function canSendToEmail(string $email): bool
     {
         /** @var WrongEmail[]|Collection $emails */
@@ -24,5 +23,4 @@ class AwsSesBounceComplaintHandler
 
         return true;
     }
-
 }
