@@ -56,7 +56,7 @@ Also be sure to check the __Enable raw message delivery__ option
 Check to see if it is safe to send email
 ```php
 $email = "me@example.com";
-AwsSesBounceComplaintHandler::canSendToEmail($email);
+AwsSesBounceComplaint::canSendToEmail($email);
 ```
 
 To stop emails from being sent to unsafe email addresses automatically

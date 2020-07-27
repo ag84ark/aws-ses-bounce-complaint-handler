@@ -41,7 +41,7 @@
                 "ag84ark\\AwsSesBounceComplaintHandler\\AwsSesBounceComplaintHandlerServiceProvider"
             ],
             "aliases": {
-                "AwsSesBounceComplaintHandler": "ag84ark\\AwsSesBounceComplaintHandler\\Facades\\AwsSesBounceComplaintHandler"
+                "AwsSesBounceComplaintHandler": "AwsSesBounceComplaint"
             }
         }
     },

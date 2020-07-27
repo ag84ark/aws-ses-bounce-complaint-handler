@@ -2,7 +2,7 @@
 
 namespace ag84ark\AwsSesBounceComplaintHandler\Tests;
 
-use ag84ark\AwsSesBounceComplaintHandler\Facades\AwsSesBounceComplaintHandler;
+use ag84ark\AwsSesBounceComplaintHandler\Facades\AwsSesBounceComplaint;
 use ag84ark\AwsSesBounceComplaintHandler\Models\WrongEmail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Config;
@@ -18,7 +18,7 @@ class AwsSesBounceComplaintHandlerTest extends TestCase
 
         factory(WrongEmail::class)->create(['email' => $email, 'problem_type' => 'Bounce', 'problem_subtype' => 'Permanent']);
 
-        $this->assertFalse(AwsSesBounceComplaintHandler::canSendToEmail($email));
+        $this->assertFalse(AwsSesBounceComplaint::canSendToEmail($email));
     }
 
     /** @test */
@@ -28,7 +28,7 @@ class AwsSesBounceComplaintHandlerTest extends TestCase
 
         factory(WrongEmail::class, 5)->create(['problem_type' => 'Bounce', 'problem_subtype' => 'Permanent']);
 
-        $this->assertTrue(AwsSesBounceComplaintHandler::canSendToEmail($email));
+        $this->assertTrue(AwsSesBounceComplaint::canSendToEmail($email));
     }
 
     /** @test */
