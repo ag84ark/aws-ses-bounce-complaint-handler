@@ -53,13 +53,13 @@ Also be sure to check the __Enable raw message delivery__ option
 
 ## Usage
 
-Check to see if it is safe to send email
+#### Check to see if it is safe to send email
 ```php
 $email = "me@example.com";
 AwsSesBounceComplaint::canSendToEmail($email);
 ```
 
-To stop emails from being sent to unsafe email addresses automatically
+#### To stop emails from being sent to unsafe email addresses automatically
 Add in App\Providers\EventServiceProvider.php
 
 ```php
@@ -107,6 +107,19 @@ In  App\Listeners\CheckEmailAddressBeforeSending.php
 
 ```
 
+
+#### To be able to resend to a "banned" email address use
+```php
+$email = "me@example.com";
+AwsSesBounceComplaint::ignoreEmail($email);
+```
+This will mark the entries to be ignored when running __canSendToEmail__ but will only work if you run this after the email address was marked as bad. Useful in development.
+
+#### To remove all entries of an email
+```php
+$email = "me@example.com";
+AwsSesBounceComplaint::clearEmail($email);
+```
 ## Change log
 
 Please see the [changelog](changelog.md) for more information on what has changed recently.

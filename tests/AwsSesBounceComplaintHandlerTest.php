@@ -22,6 +22,32 @@ class AwsSesBounceComplaintHandlerTest extends TestCase
     }
 
     /** @test */
+    public function it_send_to_permanent_bounce_when_ignore_set_to_true(): void
+    {
+        $email = 'me@me.com';
+
+        factory(WrongEmail::class)->create(['email' => $email, 'problem_type' => 'Bounce', 'problem_subtype' => 'Permanent']);
+
+        $this->assertFalse(AwsSesBounceComplaint::canSendToEmail($email));
+
+        AwsSesBounceComplaint::ignoreEmail($email);
+
+        $this->assertTrue(AwsSesBounceComplaint::canSendToEmail($email));
+    }
+
+    /** @test */
+    public function it_removes_all_entries_of_email(): void
+    {
+        $email = 'me@me.com';
+
+        factory(WrongEmail::class)->create(['email' => $email, 'problem_type' => 'Bounce', 'problem_subtype' => 'Permanent']);
+
+        AwsSesBounceComplaint::clearEmail($email);
+
+        $this->assertDatabaseMissing((new WrongEmail())->getTable(), ['email' => $email]);
+    }
+
+    /** @test */
     public function it_can_send_email(): void
     {
         $email = 'me@me.com';

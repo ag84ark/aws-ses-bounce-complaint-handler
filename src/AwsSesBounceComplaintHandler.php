@@ -23,4 +23,21 @@ class AwsSesBounceComplaintHandler
 
         return true;
     }
+
+    public function ignoreEmail(string $email): void
+    {
+        /** @var WrongEmail[]|Collection $emails */
+        $emails = WrongEmail::where('email', '=', $email)->get();
+
+        foreach ($emails as $wrongEmail) {
+            $wrongEmail->ignore = true;
+            $wrongEmail->save();
+        }
+    }
+
+    public function clearEmail(string $email): void
+    {
+        /* @var WrongEmail[]|Collection $emails */
+        WrongEmail::where('email', '=', $email)->delete();
+    }
 }

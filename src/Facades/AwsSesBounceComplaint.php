@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Facade;
 
 /**
  * @method static bool canSendToEmail(string $email)
+ * @method static void ignoreEmail(string $email)
+ * @method static void clearEmail(string $email)
  *
  * @see \ag84ark\AwsSesBounceComplaintHandler\AwsSesBounceComplaintHandler
  */
