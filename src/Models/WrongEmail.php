@@ -51,9 +51,16 @@ class WrongEmail extends Model
 
     public function canBouncedSend(): bool
     {
-        return 'Bounce' === $this->problem_type
-            && 'Permanent' !== $this->problem_subtype
-            && $this->updated_at->diffInMinutes(config('aws-ses-bounce-complaint-handler.block_bounced_transient_for_minutes'));
+        if ('Bounce' !== $this->problem_type || 'Permanent' === $this->problem_subtype) {
+            return false;
+        }
+
+        if (null === $this->updated_at) {
+            return true;
+        }
+
+        return $this->updated_at->diffInMinutes(now())
+            >= (int) config('aws-ses-bounce-complaint-handler.block_bounced_transient_for_minutes');
     }
 
     /**

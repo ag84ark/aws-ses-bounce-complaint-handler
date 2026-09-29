@@ -36,6 +36,30 @@ class AwsSesBounceComplaintHandlerTest extends TestCase
     }
 
     /** @test */
+    public function it_can_not_send_to_recent_transient_bounce(): void
+    {
+        Config::set('aws-ses-bounce-complaint-handler.block_bounced_transient_for_minutes', 300);
+        $email = 'me@me.com';
+
+        factory(WrongEmail::class)->create(['email' => $email, 'problem_type' => 'Bounce', 'problem_subtype' => 'Transient']);
+
+        $this->assertFalse(AwsSesBounceComplaint::canSendToEmail($email));
+    }
+
+    /** @test */
+    public function it_can_send_to_transient_bounce_after_block_period(): void
+    {
+        Config::set('aws-ses-bounce-complaint-handler.block_bounced_transient_for_minutes', 300);
+        $email = 'me@me.com';
+
+        $wrongEmail = factory(WrongEmail::class)->create(['email' => $email, 'problem_type' => 'Bounce', 'problem_subtype' => 'Transient']);
+        $wrongEmail->updated_at = now()->subMinutes(301);
+        $wrongEmail->save();
+
+        $this->assertTrue(AwsSesBounceComplaint::canSendToEmail($email));
+    }
+
+    /** @test */
     public function it_removes_all_entries_of_email(): void
     {
         $email = 'me@me.com';
